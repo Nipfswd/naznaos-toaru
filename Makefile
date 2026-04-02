@@ -7,7 +7,7 @@ DIRS = core
 all: kernel
 
 install: kernel
-	mount bootdisk.img /mnt -o loop
+	cp bootdisk.src.img bootdisk.img
 	cp kernel /mnt/kernel
 	umount /mnt
 	cp kernel /boot/naznaos-kernel
