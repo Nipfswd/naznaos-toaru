@@ -2,7 +2,7 @@ include Makefile.inc
 
 DIRS = core
 
-.PHONY: all clean install core
+.PHONY: all clean install core run
 
 all: kernel
 
@@ -11,6 +11,9 @@ install: kernel
 	cp kernel /mnt/kernel
 	umount /mnt
 	cp kernel /boot/naznaos-kernel
+
+run: bootdisk.img
+	qemu-system-i386 -fda bootdisk.img
 
 kernel: start.o link.ld main.o core
 	${LD} -T link.ld -o kernel *.o core/*.o
