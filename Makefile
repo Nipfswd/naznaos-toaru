@@ -8,9 +8,7 @@ all: kernel
 
 install: kernel
 	cp bootdisk.src.img bootdisk.img
-	cp kernel /mnt/kernel
-	umount /mnt
-	cp kernel /boot/naznaos-kernel
+	mcopy -i bootdisk.img kernel ::
 
 run: bootdisk.img
 	qemu-system-i386 -fda bootdisk.img
