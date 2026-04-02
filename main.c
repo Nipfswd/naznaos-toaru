@@ -1,6 +1,9 @@
 #include <system.h>
 #include <multiboot.h>
 
+extern page_directory_t *kernel_directory;
+extern page_directory_t *current_directory;
+
 /*
  * memcpy
  * Copy from source to destination. Assumes that
