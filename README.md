@@ -9,4 +9,4 @@ For example, you can boot the disk in `qemu`:
 
     qemu -fda bootdisk.img
 
-Or you could set up a VirtualBox machine and load the floppy image.
+Or you could set up a VirtualBox machine and load the floppy image. 
