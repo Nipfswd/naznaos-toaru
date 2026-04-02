@@ -14,8 +14,8 @@ install: kernel
 	cp kernel /mnt/kernel
 	umount /mnt
 
-kernel: start.o main.o vga.o
-	ld -m elf_i386 -T link.ld -o kernel start.o main.o vga.o
+kernel: start.o link.ld main.o vga.o gdt.o
+	ld -m elf_i386 -T link.ld -o kernel *.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
