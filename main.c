@@ -1,6 +1,9 @@
 #include <system.h>
 #include <multiboot.h>
 
+page_directory_t *kernel_directory   = NULL;
+page_directory_t *current_directory  = NULL;
+
 /*
  * memcpy
  * Copy from source to destination. Assumes that
@@ -130,7 +133,7 @@ main(struct multiboot *mboot_ptr) {
 	isrs_install();
 	irq_install();
 	init_video();
-	paging_install(mboot_ptr->mem_upper);
+	paging_install(mboot_ptr->mem_upper + 1024);
 	timer_install();
 	keyboard_install();
 	/* Yes, yes, these are #define'd strings, consider this a nice test of kprintf */

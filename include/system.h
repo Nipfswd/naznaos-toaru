@@ -104,8 +104,8 @@ typedef struct page_directory {
 	uintptr_t physical_address; /* The physical address of physical_tables */
 } page_directory_t;
 
-page_directory_t * kernel_directory;
-page_directory_t * current_directory;
+extern page_directory_t *kernel_directory;
+extern page_directory_t *current_directory;
 
 extern void paging_install(uint32_t memsize);
 extern void switch_page_directory(page_directory_t *new);
