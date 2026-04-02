@@ -13,6 +13,7 @@ install: kernel
 	mount bootdisk.img /mnt -o loop
 	cp kernel /mnt/kernel
 	umount /mnt
+	cp kernel /boot/nazna-kernel
 
 kernel: start.o link.ld main.o vga.o gdt.o idt.o isrs.o irq.o timer.o kbd.o kprintf.o
 	ld -m elf_i386 -T link.ld -o kernel *.o
