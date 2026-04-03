@@ -2,3 +2,6 @@ naznaos-kernel
 naznaos-initrd
 *.o
 *.swp
+bootloader/stage1
+bootloader/stage2
+bootloader/stage2.s
