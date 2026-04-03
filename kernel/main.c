@@ -37,6 +37,7 @@
 
 extern page_directory_t *kernel_directory;
 extern page_directory_t *current_directory;
+uintptr_t initial_esp = 0;
 
 /*
  * kernel entry point

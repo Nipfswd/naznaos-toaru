@@ -163,6 +163,6 @@ extern void switch_task();
 extern uint32_t fork();
 extern uint32_t getpid();
 
-uintptr_t initial_esp;
+extern uintptr_t initial_esp;
 
 #endif
