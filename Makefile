@@ -13,15 +13,13 @@ GENEXT = genext2fs
 all: kernel initrd
 
 install: kernel initrd
-	@${ECHO} -n "\e[34m   --   Installing floppy image...\e[0m"
-	@cp bootdisk.src.img bootdisk.img
-	@mcopy -i bootdisk.img kernel ::
-	@mcopy -i bootdisk.img initrd ::
+	@${ECHO} -n "\e[34m   --   Installing to /boot...\e[0m"
+	@cp kernel /boot/naznaos-kernel
 	@cp initrd /boot/naznaos-initrd
-	@${ECHO} "\r\e[34;1m   --   Floppy image created.     \e[0m"
+	@${ECHO} "\r\e[34;1m   --   Kernel and ramdisk installed.\e[0m"
 
-run: bootdisk.img
-	${EMU} bootdisk.img
+run: kernel initrd
+	${EMU} -kernel kernel -initrd initrd
 
 kernel: start.o link.ld main.o ${MODULES} ${FILESYSTEMS}
 	@${ECHO} -n "\e[32m   LD   $<\e[0m"
