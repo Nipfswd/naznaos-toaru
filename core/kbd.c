@@ -8,6 +8,8 @@ struct keyboard_states {
 
 typedef void (*keyboard_handler_t)(int scancode);
 
+keyboard_buffer_t keyboard_buffer_handler = NULL;
+
 char kbd_us[128] = {
 	0, 27,
 	'1','2','3','4','5','6','7','8','9','0',
@@ -159,9 +161,24 @@ void
 keyboard_install() {
 	/* IRQ installer */
 	irq_install_handler(1, keyboard_handler);
+	keyboard_buffer_handler = NULL;
 }
 
 void
 keyboard_wait() {
 	while(inportb(0x64) & 2);
+}
+
+/*
+ * putch
+ */
+void
+putch(
+		unsigned char c
+	 ) {
+	if (keyboard_buffer_handler) {
+		keyboard_buffer_handler(c);
+	} else {
+		writech(c);
+	}
 }
