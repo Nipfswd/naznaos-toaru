@@ -31,6 +31,7 @@ naznaos-kernel: kernel/start.o kernel/link.ld kernel/main.o ${MODULES} ${FILESYS
 	@${ECHO} -n "\033[32m   LD   $<\033[0m"
 	@${LD} -T kernel/link.ld -o naznaos-kernel kernel/*.o kernel/core/*.o kernel/core/fs/*.o
 	@${ECHO} "\r\033[32;1m   LD   $<\033[0m"
+	@${ECHO} "\033[34;1m   --   Kernel is ready!\033[0m"
 
 kernel/start.o: kernel/start.asm
 	@${ECHO} -n "\033[32m  yasm  $<\033[0m"
@@ -50,6 +51,7 @@ naznaos-initrd: initrd/kernel
 	@-rm -f naznaos-initrd
 	@${GENEXT} -d initrd -q -b 249 naznaos-initrd
 	@${ECHO} "\r\033[32;1m initrd Generated initial RAM disk image\033[0m"
+	@${ECHO} "\033[34;1m   --   HDD image is ready!\033[0m"
 
 ### Ram Disk installers...
 
