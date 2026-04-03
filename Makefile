@@ -9,6 +9,7 @@ all: kernel
 install: kernel
 	cp bootdisk.src.img bootdisk.img
 	mcopy -i bootdisk.img kernel ::
+	mcopy -i bootdisk.img initrd ::
 
 run: bootdisk.img
 	qemu-system-i386 -fda bootdisk.img

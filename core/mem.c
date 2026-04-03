@@ -6,97 +6,104 @@
 #include <system.h>
 
 typedef struct {
-	uint32_t magic;
-	char     is_hole;
-	uint32_t size;
+    uint32_t magic;
+    char     is_hole;
+    uint32_t size;
 } header_t;
 
 typedef struct {
-	uint32_t magic;
-	header_t * header;
+    uint32_t magic;
+    header_t * header;
 } footer_t;
+
+/* Actual storage for the paging globals */
+page_directory_t *kernel_directory = NULL;
+page_directory_t *current_directory = NULL;
 
 extern uintptr_t end;
 uintptr_t placement_pointer = &end;
+
+/* Forward declaration to avoid implicit declaration */
+void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 
 /*
  * kmalloc() is the kernel's dumb placement allocator
  */
 uintptr_t
 kmalloc_real(
-		size_t size,
-		int align,
-		uintptr_t * phys
-		) {
-	if (align && (placement_pointer & 0xFFFFF000)) {
-		placement_pointer &= 0xFFFFF000;
-	}
-	if (phys) {
-		*phys = placement_pointer;
-	}
-	uintptr_t address = placement_pointer;
-	placement_pointer += size;
-	return address;
+        size_t size,
+        int align,
+        uintptr_t * phys
+        ) {
+    if (align && (placement_pointer & 0xFFFFF000)) {
+        placement_pointer &= 0xFFFFF000;
+    }
+    if (phys) {
+        *phys = placement_pointer;
+    }
+    uintptr_t address = placement_pointer;
+    placement_pointer += size;
+    return address;
 }
 /*
  * Normal
  */
 uintptr_t
 kmalloc(
-		size_t size
-		) {
-	return kmalloc_real(size, 0, NULL);
+        size_t size
+        ) {
+    return kmalloc_real(size, 0, NULL);
 }
 /*
  * Aligned
  */
 uintptr_t
 kvmalloc(
-		size_t size
-		) {
-	return kmalloc_real(size, 1, NULL);
+        size_t size
+        ) {
+    return kmalloc_real(size, 1, NULL);
 }
 /*
  * With a physical address
  */
 uintptr_t
 kmalloc_p(
-		size_t size,
-		uintptr_t *phys
-		) {
-	return kmalloc_real(size, 0, phys);
+        size_t size,
+        uintptr_t *phys
+        ) {
+    return kmalloc_real(size, 0, phys);
 }
 /*
  * Aligned, with a physical address
  */
 uintptr_t
 kvmalloc_p(
-		size_t size,
-		uintptr_t *phys
-		) {
-	return kmalloc_real(size, 1, phys);
+        size_t size,
+        uintptr_t *phys
+        ) {
+    return kmalloc_real(size, 1, phys);
 }
 
 uintptr_t heap_end = NULL;
 
-void *
-heap_install() {
-	heap_end = placement_pointer;
+void
+heap_install(void) {
+    heap_end = placement_pointer;
 }
 
 void *
 sbrk(
-	uintptr_t increment
+    uintptr_t increment
     ) {
-	ASSERT(increment % 0x1000 == 0);
-	uintptr_t address = heap_end;
-	heap_end += increment;
-	int i;
-	for (i = address; i < heap_end; i += 0x1000) {
-		get_page(i, 1, kernel_directory);
-		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
-	}
-	return address;
+    ASSERT(increment % 0x1000 == 0);
+    uintptr_t address = heap_end;
+    heap_end += increment;
+    int i;
+    for (i = address; i < heap_end; i += 0x1000) {
+        get_page(i, 1, kernel_directory);
+        alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
+    }
+    return address;
 }
 
 /*
@@ -111,147 +118,148 @@ uint32_t nframes;
 
 static void
 set_frame(
-		uintptr_t frame_addr
-		) {
-	uint32_t frame  = frame_addr / 0x1000;
-	uint32_t index  = INDEX_FROM_BIT(frame);
-	uint32_t offset = OFFSET_FROM_BIT(frame);
-	frames[index] |= (0x1 << offset);
+        uintptr_t frame_addr
+        ) {
+    uint32_t frame  = frame_addr / 0x1000;
+    uint32_t index  = INDEX_FROM_BIT(frame);
+    uint32_t offset = OFFSET_FROM_BIT(frame);
+    frames[index] |= (0x1 << offset);
 }
 
 static void
 clear_frame(
-		uintptr_t frame_addr
-		) {
-	uint32_t frame  = frame_addr / 0x1000;
-	uint32_t index  = INDEX_FROM_BIT(frame);
-	uint32_t offset = OFFSET_FROM_BIT(frame);
-	frames[index] &= ~(0x1 << offset);
+        uintptr_t frame_addr
+        ) {
+    uint32_t frame  = frame_addr / 0x1000;
+    uint32_t index  = INDEX_FROM_BIT(frame);
+    uint32_t offset = OFFSET_FROM_BIT(frame);
+    frames[index] &= ~(0x1 << offset);
 }
 
 static uint32_t
 test_frame(
-		uintptr_t frame_addr
-		) {
-	uint32_t frame  = frame_addr / 0x1000;
-	uint32_t index  = INDEX_FROM_BIT(frame);
-	uint32_t offset = OFFSET_FROM_BIT(frame);
-	return (frames[index] & (0x1 << offset));
+        uintptr_t frame_addr
+        ) {
+    uint32_t frame  = frame_addr / 0x1000;
+    uint32_t index  = INDEX_FROM_BIT(frame);
+    uint32_t offset = OFFSET_FROM_BIT(frame);
+    return (frames[index] & (0x1 << offset));
 }
 
 static uint32_t
 first_frame() {
-	uint32_t i, j;
-	for (i = 0; i < INDEX_FROM_BIT(nframes); ++i) {
-		if (frames[i] != 0xFFFFFFFF) {
-			for (j = 0; j < 32; ++j) {
-				uint32_t test_frame = 0x1 << j;
-				if (!(frames[i] & test_frame)) {
-					return i * 0x20 + j;
-				}
-			}
-		}
-	}
-	return -1;
+    uint32_t i, j;
+    for (i = 0; i < INDEX_FROM_BIT(nframes); ++i) {
+        if (frames[i] != 0xFFFFFFFF) {
+            for (j = 0; j < 32; ++j) {
+                uint32_t test_frame = 0x1 << j;
+                if (!(frames[i] & test_frame)) {
+                    return i * 0x20 + j;
+                }
+            }
+        }
+    }
+    return -1;
 }
 
 void
 alloc_frame(
-		page_t *page,
-		int is_kernel,
-		int is_writeable
-		) {
-	if (page->frame) {
-		return;
-	} else {
-		uint32_t index = first_frame();
-		if (index == (uint32_t)-1) {
-			HALT_AND_CATCH_FIRE("Failed to allocate a frame: out of frames");
-		}
-		set_frame(index * 0x1000);
-		page->present = 1;
-		page->rw      = (is_writeable) ? 1 : 0;
-		page->user    = (is_kernel)    ? 0 : 1;
-		page->frame   = index;
-	}
+        page_t *page,
+        int is_kernel,
+        int is_writeable
+        ) {
+    if (page->frame) {
+        return;
+    } else {
+        uint32_t index = first_frame();
+        if (index == (uint32_t)-1) {
+            HALT_AND_CATCH_FIRE("Failed to allocate a frame: out of frames");
+        }
+        set_frame(index * 0x1000);
+        page->present = 1;
+        page->rw      = (is_writeable) ? 1 : 0;
+        page->user    = (is_kernel)    ? 0 : 1;
+        page->frame   = index;
+    }
 }
 
 void
 free_frame(
-		page_t *page
-		) {
-	uint32_t frame;
-	if (!(frame = page->frame)) {
-		return;
-	} else {
-		clear_frame(frame);
-		page->frame = 0x0;
-	}
+        page_t *page
+        ) {
+    uint32_t frame;
+    if (!(frame = page->frame)) {
+        return;
+    } else {
+        clear_frame(frame);
+        page->frame = 0x0;
+    }
 }
 
 void
 paging_install(uint32_t memsize) {
-	nframes = memsize  / 4;
-	frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes));
-	memset(frames, 0, INDEX_FROM_BIT(nframes));
-	kernel_directory = (page_directory_t *)kvmalloc(sizeof(page_directory_t));
-	memset(kernel_directory, 0, sizeof(page_directory_t));
-	current_directory = kernel_directory;
+    nframes = memsize  / 4;
+    frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes));
+    memset(frames, 0, INDEX_FROM_BIT(nframes));
+    kernel_directory = (page_directory_t *)kvmalloc(sizeof(page_directory_t));
+    memset(kernel_directory, 0, sizeof(page_directory_t));
+    current_directory = kernel_directory;
 
-	uint32_t i = 0;
-	while (i < placement_pointer) {
-		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
-		i += 0x1000;
-	}
-	isrs_install_handler(14, page_fault);
-	switch_page_directory(kernel_directory);
+    uint32_t i = 0;
+    while (i < placement_pointer) {
+        alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
+        i += 0x1000;
+    }
+    isrs_install_handler(14, page_fault);
+    switch_page_directory(kernel_directory);
 }
 
 void
 switch_page_directory(
-		page_directory_t * dir
-		) {
-	current_directory = dir;
-	__asm__ __volatile__ ("mov %0, %%cr3":: "r"(&dir->physical_tables));
-	uint32_t cr0;
-	__asm__ __volatile__ ("mov %%cr0, %0": "=r"(cr0));
-	cr0 |= 0x80000000;
-	__asm__ __volatile__ ("mov %0, %%cr0":: "r"(cr0));
+        page_directory_t * dir
+        ) {
+    current_directory = dir;
+    __asm__ __volatile__ ("mov %0, %%cr3":: "r"(&dir->physical_tables));
+    uint32_t cr0;
+    __asm__ __volatile__ ("mov %%cr0, %0": "=r"(cr0));
+    cr0 |= 0x80000000;
+    __asm__ __volatile__ ("mov %0, %%cr0":: "r"(cr0));
 }
 
 page_t *
 get_page(
-		uintptr_t address,
-		int make,
-		page_directory_t * dir
-		) {
-	address /= 0x1000;
-	uint32_t table_index = address / 1024;
-	if (dir->tables[table_index]) {
-		return &dir->tables[table_index]->pages[address % 1024];
-	} else if(make) {
-		uint32_t temp;
-		dir->tables[table_index] = (page_table_t *)kvmalloc_p(sizeof(page_table_t), (uintptr_t *)(&temp));
-		memset(dir->tables[table_index], 0, 0x1000);
-		dir->physical_tables[table_index] = temp | 0x7; /* Present, R/w, User */
-		return &dir->tables[table_index]->pages[address % 1024];
-	} else {
-		return 0;
-	}
+        uintptr_t address,
+        int make,
+        page_directory_t * dir
+        ) {
+    address /= 0x1000;
+    uint32_t table_index = address / 1024;
+    if (dir->tables[table_index]) {
+        return &dir->tables[table_index]->pages[address % 1024];
+    } else if(make) {
+        uint32_t temp;
+        dir->tables[table_index] = (page_table_t *)kvmalloc_p(sizeof(page_table_t), (uintptr_t *)(&temp));
+        memset(dir->tables[table_index], 0, 0x1000);
+        dir->physical_tables[table_index] = temp | 0x7; /* Present, R/w, User */
+        return &dir->tables[table_index]->pages[address % 1024];
+    } else {
+        return 0;
+    }
 }
 
 void
 page_fault(
-		struct regs *r)  {
-	uint32_t faulting_address;
-	__asm__ __volatile__("mov %%cr2, %0" : "=r"(faulting_address));
+        struct regs *r)  {
+    uint32_t faulting_address;
+    __asm__ __volatile__("mov %%cr2, %0" : "=r"(faulting_address));
 
-	int present  = !(r->err_code & 0x1);
-	int rw       = r->err_code & 0x2;
-	int user     = r->err_code & 0x4;
-	int reserved = r->err_code & 0x8;
-	int id       = r->err_code & 0x10;
+    int present  = !(r->err_code & 0x1);
+    int rw       = r->err_code & 0x2;
+    int user     = r->err_code & 0x4;
+    int reserved = r->err_code & 0x8;
+    int id       = r->err_code & 0x10;
+    (void)id;
 
-	kprintf("Page fault! (p:%d,rw:%d,user:%d,res:%d) at 0x%x\n", present, rw, user, reserved, faulting_address);
-	HALT_AND_CATCH_FIRE("Page fault");
+    kprintf("Page fault! (p:%d,rw:%d,user:%d,res:%d) at 0x%x\n", present, rw, user, reserved, faulting_address);
+    HALT_AND_CATCH_FIRE("Page fault");
 }
