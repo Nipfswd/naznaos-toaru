@@ -13,7 +13,7 @@ DD = dd conv=notrunc
 
 .PHONY: all clean install run
 
-all: naznaos-initrd naznaos-kernel
+all: naznaos-initrd naznaos-kernel bootdisk.img
 
 install: naznaos-initrd naznaos-kernel
 	@${ECHO} -n "\033[34m   --   Installing to /boot...\033[0m"
@@ -49,7 +49,6 @@ naznaos-initrd: initrd/kernel
 	@${ECHO} -n "\033[32m initrd Generating initial RAM disk\033[0m"
 	@-rm -f naznaos-initrd
 	@${GENEXT} -d initrd -q -b 249 naznaos-initrd
-	@${DD} if=bootloader/stage1.bin of=naznaos-initrd 2>/dev/null
 	@${ECHO} "\r\033[32;1m initrd Generated initial RAM disk image\033[0m"
 
 ### Ram Disk installers...
