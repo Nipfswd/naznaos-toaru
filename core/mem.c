@@ -23,6 +23,14 @@ page_directory_t *current_directory = NULL;
 extern uintptr_t end;
 uintptr_t placement_pointer = &end;
 
+void
+kmalloc_startat(
+		uintptr_t address
+		) {
+	placement_pointer = address;
+}
+
+
 /* Forward declaration to avoid implicit declaration */
 void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 
