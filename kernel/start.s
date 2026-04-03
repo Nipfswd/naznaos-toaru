@@ -1,9 +1,12 @@
+; NaznaOS Start Up / Entry Point
+; vim:syntax=nasm
+;
+; Copyright 2011 NaznaOS Kernel Development Group
+; See main.c for licensing terms (NCSA)
+;
 [BITS 32]
 ALIGN 4
 
-; NaznaOS
-; Copyright 2026 NaznaOS Kernel Development Group
-; See main.c for licensing terms (NCSA)
 
 
 ; Kernel Multiboot Headers
