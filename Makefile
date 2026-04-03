@@ -11,9 +11,10 @@ EMU = qemu-system-i386
 GENEXT = genext2fs
 DD = dd conv=notrunc
 
-.PHONY: all clean install run
+.PHONY: all system clean install run
 
-all: naznaos-initrd naznaos-kernel bootdisk.img
+all: system bootdisk.img docs
+system: naznaos-initrd naznaos-kernel
 
 install: naznaos-initrd naznaos-kernel
 	@${ECHO} -n "\033[34m   --   Installing to /boot...\033[0m"
@@ -23,6 +24,16 @@ install: naznaos-initrd naznaos-kernel
 
 run: naznaos-kernel naznaos-initrd
 	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -serial stdio
+
+#################
+# Documentation #
+#################
+docs: docs/loader.pdf
+
+%.pdf: %.tex
+	@${ECHO} -n "\033[32m  docs  Generating documentation file $@"
+	@pdflatex -halt-on-error -output-directory docs/ $< > /dev/null
+	@${ECHO} "\r\033[32;1m  docs  Generated documentation file '$@'"
 
 ################
 #    Kernel    #
@@ -119,4 +130,5 @@ clean:
 	@-rm -f bootloader/stage2/*.o
 	@-rm -f initrd/kernel
 	@-rm -f bootdisk.img
+	@-rm -f docs/*.pdf docs/*.aux docs/*.log
 	@${ECHO} "\r\033[31;1m   RM   Finished cleaning.\033[0m\033[K"
