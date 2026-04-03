@@ -109,9 +109,9 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 	serial_install();	/* Serial console */
 
 	/* Memory management */
-	paging_install(mboot_ptr->mem_upper);	/* Paging */
-	heap_install();							/* Kernel heap */
-	tasking_install();						/* Multi-tasking */
+	paging_install(mboot_ptr->mem_lower + mboot_ptr->mem_upper);   /* Paging */
+	heap_install();                         /* Kernel heap */
+	tasking_install();                      /* Multi-tasking */
 
 	/* Kernel Version */
 	settextcolor(12, 0);
