@@ -1,5 +1,4 @@
-kernel
+naznaos-kernel
+naznaos-initrd
 *.o
-bootdisk.img
-initrd
 *.swp

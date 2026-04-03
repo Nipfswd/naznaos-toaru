@@ -92,7 +92,7 @@ kvmalloc_p(
     return kmalloc_real(size, 1, phys);
 }
 
-uintptr_t heap_end = NULL;
+uintptr_t heap_end = 0;
 
 void
 heap_install(void) {
@@ -106,12 +106,12 @@ sbrk(
     ASSERT(increment % 0x1000 == 0);
     uintptr_t address = heap_end;
     heap_end += increment;
-    int i;
+    uintptr_t i;
     for (i = address; i < heap_end; i += 0x1000) {
         get_page(i, 1, kernel_directory);
         alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
     }
-    return address;
+    return (void *)address;
 }
 
 /*
