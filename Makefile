@@ -65,8 +65,9 @@ kernel/start.o: kernel/start.s
 ################
 #   Ram disk   #
 ################
-naznaos-initrd: initrd/kernel
+naznaos-initrd: initrd/boot/kernel bootloader/stage2.bin
 	@${ECHO} -n "\033[32m initrd Generating initial RAM disk\033[0m"
+	@# Get rid of the old one
 	@-rm -f naznaos-initrd
 	@${GENEXT} -d initrd -q -b 249 naznaos-initrd
 	@${ECHO} "\r\033[32;1m initrd Generated initial RAM disk image\033[0m"
@@ -74,9 +75,15 @@ naznaos-initrd: initrd/kernel
 
 ### Ram Disk installers...
 
+# Second stage bootloader
+initrd/boot/stage2: bootloader/stage2.bin
+	@mkdir -p initrd/boot
+	@cp bootloader/stager2.bin initrd/boot/stage2
+
 # Kernel
-initrd/kernel: naznaos-kernel
-	@cp naznaos-kernel initrd/kernel
+initrd/boot/kernel: naznaos-kernel
+	@mkdir -p initrd/boot
+	@cp naznaos-kernel initrd/boot/kernel
 
 ################
 #   Utilities  #
@@ -145,7 +152,7 @@ clean:
 	@-rm -f bootloader/stage1/*.o
 	@-rm -f bootloader/stage2.bin
 	@-rm -f bootloader/stage2/*.o
-	@-rm -f initrd/kernel
+	@-rm -f initrd/boot
 	@-rm -f bootdisk.img
 	@-rm -f docs/*.pdf docs/*.aux docs/*.log docs/*.out
 	@-rm -f docs/*.idx docs/*.ind docs/*.toc docs/*.ilg
