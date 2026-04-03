@@ -24,7 +24,7 @@ run: bootdisk.img
 curses: bootdisk.img
 	qemu -curses -fda bootdisk.img
 
-kernel: start.o link.ld main.o ${MODULES} ${FILESYSEMS}
+kernel: start.o link.ld main.o ${MODULES} ${FILESYSTEMS}
 	@${ECHO} -n "\e[32m   LD   $<\e[0m"
 	@${LD} -T link.ld -o kernel *.o core/*.o core/fs/*.o
 	@${ECHO} "\e[32;1m   LD   $<\e[0m"
