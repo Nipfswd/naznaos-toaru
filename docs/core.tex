@@ -1,37 +1,45 @@
 % Documentation core for NaznaOS
 % Copyright 2011 Noah Juopperi
-\documentclass{article}
 
+% Standard article with (centered) title page
+\documentclass[titlepage]{article}
 % Switch to a nice sans-serif font.
 \renewcommand*\familydefault{\sfdefault}
-\usepackage[margin=1in]{geometry}
-\usepackage{fancyhdr}
-\usepackage{amsmath}
-\usepackage{listings}
-\usepackage{graphicx}
-\usepackage[overlap, CJK]{ruby}
-\usepackage{makeidx}
-\usepackage[bookmarks]{hyperref}
+\usepackage[margin=1in]{geometry}   % Margins
+\usepackage{fancyhdr}               % Fancy page header
+\usepackage{amsmath}                % Extra mathemtics stuff
+\usepackage{listings}               % Source code styling
+\usepackage{graphicx}               % Graphics support
+\usepackage[overlap, CJK]{ruby}     % For Japanese
+\usepackage{makeidx}                % Indexing
+\usepackage[bookmarks]{hyperref}    % PDF hyperlink index
 
-\def\Title{NaznaOS Kernel Documentation}
-\def\Author{Noah Juopperi}
+% Some useful macros for the documentation
+\newcommand{\naznatitle}{NaznaOS Kernel Documentation}
+\newcommand{\naznaversi}{v 0.0.1}
+\newcommand{\naznaautho}{Noah Juopperi}
 
+% Title / Author
+\def\Title{\naznatitle}
+\title{\naznatitle}
+\def\Author{\naznaautho}
+\author{\naznaautho}
+
+% Enable indexing
 \makeindex
 
 % Some nice headers for the core contents.
 \pagestyle{fancy}
-\lhead{NaznaOS Documentation}
-\rhead{v0.0.1}
+\lhead{\naznatitle}
+\rhead{\naznaversi}
 
+% Begin document contents
 \begin{document}
 \begin{CJK}{UTF8}{goth}
 
 % Title page for documentation
 \begin{titlepage}
-\title{NaznaOS Kernel Documentation}
-\author{Noah Juopperi}
 \maketitle
-
 % Make sure we don't have a number here...
 \thispagestyle{empty}
 \end{titlepage}
@@ -62,9 +70,10 @@
 \addcontentsline{toc}{section}{Index}
 \printindex
 
+% License information
 \clearpage
 \input{license.tex}
 
-
+% Fin
 \end{CJK}
 \end{document}
