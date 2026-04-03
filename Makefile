@@ -25,6 +25,11 @@ kernel: start.o link.ld main.o core
 	@${LD} -T link.ld -o kernel *.o core/*.o core/fs/*.o
 	@${ECHO} "\e[32;1m   LD   $<\e[0m"
 
+start.o: start.asm
+	@${ECHO} -n "\e[32m  nasm  start.asm\e[0m"
+	@nasm -f elf -o start.o start.asm
+	@${ECHO} "\e[32;1m  nasm  start.asm\e[0m"
+
 %.o: %.c
 	@${ECHO} -n "\e[32m   CC   $<\e[0m"
 	@${CC} ${CFLAGS} -I./include -c -o $@ $<
@@ -32,11 +37,6 @@ kernel: start.o link.ld main.o core
 
 core:
 	@cd core; ${MAKE} ${MFLAGS}
-
-start.o: start.asm
-	@${ECHO} -n "\e[32m  nasm  start.asm\e[0m"
-	@nasm -f elf -o start.o start.asm
-	@${ECHO} "\e[32;1m  nasm  start.asm\e[0m"
 
 initrd: fs
 	@${ECHO} -n "\e[32m initrd  Generating initial RAM disk\e[0m"
