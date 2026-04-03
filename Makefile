@@ -7,32 +7,42 @@ DIRS = core
 all: kernel
 
 install: kernel
-	cp bootdisk.src.img bootdisk.img
-	mcopy -i bootdisk.img kernel ::
-	mcopy -i bootdisk.img initrd ::
-	cp initrd /boot/naznaos-initrd
+	@${ECHO} -n "\e[32m   --   Installing floppy image...\e[0m"
+	@cp bootdisk.src.img bootdisk.img
+	@mcopy -i bootdisk.img kernel ::
+	@mcopy -i bootdisk.img initrd ::
+	@cp initrd /boot/naznaos-initrd
+	@${ECHO} "\e[32;1m   --   Floppy image created.	 \e[0m"
 
 run: bootdisk.img
-	qemu-system-i386 -fda bootdisk.img
+	@qemu-system-i386 -fda bootdisk.img
 
 curses: bootdisk.img
 	qemu -curses -fda bootdisk.img
 
 kernel: start.o link.ld main.o core
-	${LD} -T link.ld -o kernel *.o core/*.o core/fs/*.o
+	@${ECHO} -n "\e[32m   LD   $<\e[0m"
+	@${LD} -T link.ld -o kernel *.o core/*.o core/fs/*.o
+	@${ECHO} "\e[32;1m   LD   $<\e[0m"
 
 %.o: %.c
-	${CC} ${CFLAGS} -I./include -c -o $@ $<
+	@${ECHO} -n "\e[32m   CC   $<\e[0m"
+	@${CC} ${CFLAGS} -I./include -c -o $@ $<
+	@${ECHO} "\e[32;1m   CC   $<\e[0m"
 
 core:
-	cd core; ${MAKE} ${MFLAGS}
+	@cd core; ${MAKE} ${MFLAGS}
 
 start.o: start.asm
-	nasm -f elf -o start.o start.asm
+	@${ECHO} -n "\e[32m  nasm  start.asm\e[0m"
+	@nasm -f elf -o start.o start.asm
+	@${ECHO} "\e[32;1m  nasm  start.asm\e[0m"
 
 initrd: fs
-	-rm -f initrd
-	genext2fs -d fs -q -b 249 -v initrd
+	@${ECHO} -n "\e[32m initrd  Generating initial RAM disk\e[0m"
+	@-rm -f initrd
+	@genext2fs -d fs -q -b 249 initrd
+	@${ECHO} "\e[32;1m initrd  Generated initial RAM disk image\e[0m"
 
 clean:
 	-rm -f *.o kernel
