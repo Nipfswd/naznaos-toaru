@@ -14,9 +14,9 @@ DD = dd conv=notrunc
 
 .PHONY: all clean install run
 
-all: naznaos-kernel naznaos-initrd
+all: naznaos-initrd naznaos-kernel
 
-install: naznaos-kernel naznaos-initrd
+install: naznaos-initrd naznaos-kernel
 	@${ECHO} -n "\033[34m   --   Installing to /boot...\033[0m"
 	@cp naznaos-kernel /boot/naznaos-kernel
 	@cp naznaos-initrd /boot/naznaos-initrd
