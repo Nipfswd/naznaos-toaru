@@ -3,7 +3,7 @@
  *
  * Part of the NaznaOS Kernel, under the NCSA license
  *
- * Copyright 2026 Noah Juopperi
+ * Copyright 2011 Noah Juopperi 
  *
  *   (Preliminary documentation based on intended future use; currently,
  *    this is just a file system explorer)
@@ -189,7 +189,10 @@ start_shell() {
 				int i = 0xFFFFFFFF;
 				int j = *(int *)i;
 				j = 0xDEADBEEF;
-			} else {
+			} else if (!strcmp(cmd, "exit")) {
+				kprintf("Good byte.\n");
+				break;
+			}else {
 				kprintf("Unrecognized command: %s\n", cmd);
 			}
 		}
