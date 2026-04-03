@@ -20,10 +20,18 @@
 \newcommand{\naznaautho}{Noah Juopperi}
 
 % Title / Author
-\def\Title{\naznatitle}
 \title{\naznatitle}
-\def\Author{\naznaautho}
 \author{\naznaautho}
+
+% PDF Data
+\hypersetup{
+    pdftitle={\naznatitle},
+    pdfauthor={\naznaautho},
+    pdfkeywords={naznaos, kernel, development, documentation},
+    bookmarksnumbered,
+    pdfstartview={FitH},
+    urlcolor=cyan,
+}
 
 % Enable indexing
 \makeindex
