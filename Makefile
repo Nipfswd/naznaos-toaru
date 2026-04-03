@@ -15,7 +15,7 @@ run: bootdisk.img
 	qemu-system-i386 -fda bootdisk.img
 
 kernel: start.o link.ld main.o core
-	${LD} -T link.ld -o kernel *.o core/*.o
+	${LD} -T link.ld -o kernel *.o core/*.o core/fs/*.o
 
 %.o: %.c
 	${CC} ${CFLAGS} -I./include -c -o $@ $<
