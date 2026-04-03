@@ -45,7 +45,7 @@ kernel/start.o: kernel/start.asm
 ################
 #   Ram disk   #
 ################
-naznaos-initrd: initrd bootloader/stage1.bin initrd/kernel
+naznaos-initrd: initrd bootloader/stage1.bin initrd/stage2 initrd/kernel
 	@${ECHO} -n "\033[32m initrd Generating initial RAM disk\033[0m"
 	@-rm -f naznaos-initrd
 	@${GENEXT} -d initrd -q -b 249 naznaos-initrd
@@ -60,7 +60,7 @@ initrd/kernel: naznaos-kernel
 
 # Second-stage bootloader
 initrd/stage2: bootloader/stage2.bin
-	@cp bootloader/stage2.bin initrd/boot/stage2
+	@cp bootloader/stage2.bin initrd/stage2
 
 ################
 #  Bootloader  #
