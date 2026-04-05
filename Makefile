@@ -20,10 +20,10 @@ EMU = qemu-system-i386
 GENEXT = genext2fs
 DD = dd conv=notrunc
 
-.PHONY: all system clean install run docs utils check-reqs
+.PHONY: all system clean install run docs utils
 .SECONDARY: 
 
-all: check-reqs system bootdisk.img docs utils
+all: .passed system bootdisk.img docs utils
 system: naznaos-initrd naznaos-kernel
 
 install: naznaos-initrd naznaos-kernel
@@ -37,8 +37,9 @@ run: naznaos-kernel naznaos-initrd
 
 utils: ${UTILITIES}
 
-check-reqs:
+.passed:
 	@util/check-reqs > /dev/null
+	@touch .passed
 
 #################
 # Documentation #
@@ -192,4 +193,5 @@ clean:
 	@-rm -f docs/*.pdf docs/*.aux docs/*.log docs/*.out
 	@-rm -f docs/*.idx docs/*.ind docs/*.toc docs/*.ilg
 	@-rm -f util/bin/*
+	@-rm -f .passed
 	@${ECHO} "\r\033[31;1m   RM   Finished cleaning.\033[0m\033[K"
