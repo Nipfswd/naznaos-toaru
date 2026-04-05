@@ -13,6 +13,7 @@ ECHO = `which echo` -e
 # Feel free to be specific, but I'd rather you not be.
 MODULES = $(patsubst %.c,%.o,$(wildcard kernel/core/*.c))
 FILESYSTEMS = $(patsubst %.c,%.o,$(wildcard kernel/core/fs/*.c))
+VIDEODRIVERS = $(patsubst %.c,%.o,$(wildcard kernel/core/video/*.c))
 EMU = qemu-system-i386
 GENEXT = genext2fs
 DD = dd conv=notrunc
@@ -29,7 +30,7 @@ install: naznaos-initrd naznaos-kernel
 	@${ECHO} "\r\033[34;1m   --   Kernel and ramdisk installed.\033[0m"
 
 run: naznaos-kernel naznaos-initrd
-	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -serial stdio
+	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -serial stdio -vga std
 
 #################
 # Documentation #
@@ -46,9 +47,9 @@ docs/core.pdf: docs/*.tex
 ################
 #    Kernel    #
 ################
-naznaos-kernel: kernel/start.o kernel/link.ld kernel/main.o ${MODULES} ${FILESYSTEMS}
+naznaos-kernel: kernel/start.o kernel/link.ld kernel/main.o ${MODULES} ${FILESYSTEMS} ${VIDEODRIVERS}
 	@${ECHO} -n "\033[32m   LD   $<\033[0m"
-	@${LD} -T kernel/link.ld -o naznaos-kernel kernel/*.o kernel/core/*.o kernel/core/fs/*.o
+	@${LD} -T kernel/link.ld -o naznaos-kernel kernel/*.o kernel/core/*.o kernel/core/fs/*.o kernel/core/video/*.o
 	@${ECHO} "\r\033[32;1m   LD   $<\033[0m"
 	@${ECHO} "\033[34;1m   --   Kernel is ready!\033[0m"
 
@@ -148,6 +149,7 @@ clean:
 	@-rm -f kernel/*.o
 	@-rm -f kernel/core/*.o
 	@-rm -f kernel/core/fs/*.o
+	@-rm -f kernel/core/video/*.o
 	@-rm -f bootloader/stage1.bin
 	@-rm -f bootloader/stage1/*.o
 	@-rm -f bootloader/stage2.bin
