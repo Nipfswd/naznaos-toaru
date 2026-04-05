@@ -203,3 +203,17 @@ putch(
 		writech(c);
 	}
 }
+
+/*
+ * Externally Set Keyboard States
+ */
+void
+set_kbd(
+		int shift,
+		int alt,
+		int ctrl
+	   ) {
+	keyboard_state.shift = shift;
+	keyboard_state.alt   = alt;
+	keyboard_state.ctrl  = ctrl;
+}
