@@ -1,4 +1,7 @@
 /*
+ * vim:tabstop=4
+ * vim:noexpandtab
+ *
  * NaznaOS Kernel Debugger Shell
  *
  * Part of the NaznaOS Kernel, under the NCSA license
