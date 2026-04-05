@@ -15,13 +15,14 @@ MODULES = $(patsubst %.c,%.o,$(wildcard kernel/core/*.c))
 FILESYSTEMS = $(patsubst %.c,%.o,$(wildcard kernel/core/fs/*.c))
 VIDEODRIVERS = $(patsubst %.c,%.o,$(wildcard kernel/core/video/*.c))
 BINARIES = initrd/bin/test
+UTILITIES = util/bin/readelf
 EMU = qemu-system-i386
 GENEXT = genext2fs
 DD = dd conv=notrunc
 
-.PHONY: all system clean install run docs
+.PHONY: all system clean install run docs utils
 
-all: system bootdisk.img docs
+all: system bootdisk.img docs utils
 system: naznaos-initrd naznaos-kernel
 
 install: naznaos-initrd naznaos-kernel
@@ -33,17 +34,19 @@ install: naznaos-initrd naznaos-kernel
 run: naznaos-kernel naznaos-initrd
 	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -append vid=qemu -serial stdio -vga std
 
+utils: ${UTILITIES}
+
 #################
 # Documentation #
 #################
 docs: docs/core.pdf
 
 docs/core.pdf: docs/*.tex 
-	@${ECHO} -n "\033[32m  docs  Generating documentation..."
+	@${ECHO} -n "\033[32m  docs  Generating documentation...\033[0m"
 	@pdflatex -draftmode -halt-on-error -output-directory docs/ docs/core.tex > /dev/null
 	@makeindex -q docs/*.idx
 	@pdflatex -halt-on-error -output-directory docs/ docs/core.tex > /dev/null
-	@${ECHO} "\r\033[32;1m  docs  Generated documentation PDF."
+	@${ECHO} "\r\033[32;1m  docs  Generated documentation PDF.\033[0m"
 
 ################
 #    Kernel    #
@@ -96,7 +99,11 @@ util/bin/mrboots-installer: util/mrboots-installer.c
 	@${CC} ${NATIVEFLAGS} -o $@ $<
 	@${ECHO} "\r\033[32;1m   CC   $<\033[0m"
 
-
+util/bin/readelf: util/readelf.c
+	@${ECHO} -n "\033[32m   CC   $<\033[0m"
+	@${CC} ${NATIVEFLAGS} -o $@ $<
+	@${ECHO} "\r\033[32;1m   CC   $<\033[0m"
+	
 ################
 #   Userspace  #
 ################
