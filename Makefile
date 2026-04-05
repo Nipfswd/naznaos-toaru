@@ -30,7 +30,7 @@ install: naznaos-initrd naznaos-kernel
 	@${ECHO} "\r\033[34;1m   --   Kernel and ramdisk installed.\033[0m"
 
 run: naznaos-kernel naznaos-initrd
-	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -serial stdio -vga std
+	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -append vid=qemu -serial stdio -vga std
 
 #################
 # Documentation #
