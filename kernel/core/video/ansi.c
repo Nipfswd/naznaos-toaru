@@ -6,6 +6,8 @@
 
 #include <system.h>
 
+int ansi_ready = 0;
+
 /* Triggers escape mode. */
 #define ANSI_ESCAPE  27
 /* Escape verify */

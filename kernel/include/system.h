@@ -260,7 +260,7 @@ extern void bochs_draw_line(uint16_t,uint16_t,uint16_t,uint16_t,uint32_t);
 void ansi_put(char c);
 void ansi_print(char * c);
 void ansi_init();
-int  ansi_ready;
+extern int  ansi_ready;
 
 extern uint8_t number_font[][12];
 
