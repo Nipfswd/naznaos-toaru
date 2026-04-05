@@ -20,10 +20,10 @@ EMU = qemu-system-i386
 GENEXT = genext2fs
 DD = dd conv=notrunc
 
-.PHONY: all system clean install run docs utils
+.PHONY: all system clean install run docs utils check-reqs
 .SECONDARY: 
 
-all: system bootdisk.img docs utils
+all: check-reqs system bootdisk.img docs utils
 system: naznaos-initrd naznaos-kernel
 
 install: naznaos-initrd naznaos-kernel
@@ -36,6 +36,9 @@ run: naznaos-kernel naznaos-initrd
 	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -append vid=qemu -serial stdio -vga std
 
 utils: ${UTILITIES}
+
+check-reqs:
+	@util/check-reqs > /dev/null
 
 #################
 # Documentation #
