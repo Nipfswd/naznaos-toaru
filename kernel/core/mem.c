@@ -187,8 +187,8 @@ free_frame(
 void
 paging_install(uint32_t memsize) {
 	nframes = memsize  / 4;
-	frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes));
-	memset(frames, 0, INDEX_FROM_BIT(nframes));
+	frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes) * sizeof(uint32_t));
+	memset(frames, 0, INDEX_FROM_BIT(nframes) * sizeof(uint32_t));
 
 	uintptr_t phys;
 	kernel_directory = (page_directory_t *)kvmalloc_p(sizeof(page_directory_t),&phys);
@@ -201,7 +201,6 @@ paging_install(uint32_t memsize) {
 	}
 	isrs_install_handler(14, page_fault);
 	kernel_directory->physical_address = (uintptr_t)kernel_directory->physical_tables;
-
 
 	current_directory = clone_directory(kernel_directory);
 	switch_page_directory(kernel_directory);
