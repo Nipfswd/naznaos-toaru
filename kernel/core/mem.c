@@ -305,5 +305,6 @@ sbrk(
 		get_page(i, 1, kernel_directory);
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 1);
 	}
+	memset((void *)address, 0x0, increment);
 	return (void *)address;
 }
