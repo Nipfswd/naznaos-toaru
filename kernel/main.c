@@ -150,7 +150,7 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 	fork();
 
 	if (getpid() == 0) {
-		while (1) {
+		while (0) {
 			uint16_t hours, minutes, seconds;
 			get_time(&hours, &minutes, &seconds);
 
@@ -184,6 +184,8 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 				restore_csr();
 			}
 			__asm__ __volatile__ ("sti");
+		}
+		while (1) {
 			__asm__ __volatile__ ("hlt");
 		}
 	} else {
