@@ -3,8 +3,8 @@
  *
  * Parses arguments passed by, ie, a Multiboot bootloader.
  *
- * Part of the NaznaOS Kernel.
- * (C) 2026 Noah Juopperi
+ * Part of the ToAruOS Kernel.
+ * (C) 2011 Kevin Lange
  */
 #include <system.h>
 
