@@ -124,7 +124,7 @@ initrd/bin/%: loader/%.o loader/crtbegin.o loader/syscall.o
 
 loader/%.o: loader/%.c
 	@${ECHO} -n "\033[32m   CC   $<\033[0m"
-	@${CC} ${CFLAGS} -c -o $@ $<
+	@${CC} ${CFLAGS} -I./kernel/include -c -o $@ $<
 	@${ECHO} "\r\033[32;1m   CC   $<\033[0m"
 
 ################
