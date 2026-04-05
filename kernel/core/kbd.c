@@ -1,15 +1,15 @@
 /*
  * Low-level keyboard interrupt driver.
- * vim:tabstop=4
- * vim:noexpandtab
  *
- * XXX: This should move to a server for handling
- *      input devices and what have you.
+ * Part of the NaznaOS Kernel
+ * (C) 2026 Noah Juopperi
  *
+ * TODO: Move this to a server.
  */
 
 #include <system.h>
 
+/* A bit-map to store the keyboard states */
 struct keyboard_states {
 	uint32_t shift : 1;
 	uint32_t alt   : 1;
@@ -217,3 +217,8 @@ set_kbd(
 	keyboard_state.alt   = alt;
 	keyboard_state.ctrl  = ctrl;
 }
+
+/*
+ * vim:tabstop=4
+ * vim:noexpandtab
+ */
