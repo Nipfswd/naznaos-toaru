@@ -6,7 +6,8 @@
 
 #include <system.h>
 
-page_directory_t *kernel_directory = NULL;
+/* stupid errors */
+page_directory_t *kernel_directory  = NULL;
 page_directory_t *current_directory = NULL;
 
 extern uintptr_t end;
@@ -187,8 +188,8 @@ free_frame(
 void
 paging_install(uint32_t memsize) {
 	nframes = memsize  / 4;
-	frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes) * sizeof(uint32_t));
-	memset(frames, 0, INDEX_FROM_BIT(nframes) * sizeof(uint32_t));
+	frames  = (uint32_t *)kmalloc(INDEX_FROM_BIT(nframes));
+	memset(frames, 0, INDEX_FROM_BIT(nframes));
 
 	uintptr_t phys;
 	kernel_directory = (page_directory_t *)kvmalloc_p(sizeof(page_directory_t),&phys);
@@ -201,6 +202,7 @@ paging_install(uint32_t memsize) {
 	}
 	isrs_install_handler(14, page_fault);
 	kernel_directory->physical_address = (uintptr_t)kernel_directory->physical_tables;
+
 
 	current_directory = clone_directory(kernel_directory);
 	switch_page_directory(kernel_directory);
@@ -250,6 +252,10 @@ page_fault(
 	int user     = r->err_code & 0x4;
 	int reserved = r->err_code & 0x8;
 	int id       = r->err_code & 0x10;
+
+	if (faulting_address == 0) {
+		kprintf("Null pointer dereference in the kernel.\n");
+	}
 
 	kprintf("Page fault! (p:%d,rw:%d,user:%d,res:%d,id:%d) at 0x%x\n", present, rw, user, reserved, id, faulting_address);
 	HALT_AND_CATCH_FIRE("Page fault");
