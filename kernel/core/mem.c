@@ -168,6 +168,8 @@ alloc_frame(
 		page->present = 1;
 		page->rw      = (is_writeable == 1) ? 1 : 0;
 		page->user    = (is_kernel == 1)    ? 0 : 1;
+		page->rw   = 1;
+		page->user = 1;
 		page->frame   = index;
 	}
 }
@@ -182,7 +184,7 @@ dma_frame(
 	/* Page this address directly */
 	page->present = 1;
 	page->rw      = (is_writeable) ? 1 : 0;
-	page->rw      = (is_kernel)    ? 0 : 1;
+	page->user    = (is_kernel)    ? 0 : 1;
 	page->frame   = address / 0x1000;
 }
 
@@ -210,7 +212,7 @@ paging_install(uint32_t memsize) {
 	memset(kernel_directory, 0, sizeof(page_directory_t));
 
 	uint32_t i = 0;
-	while (i < placement_pointer + 0x1000) {
+	while (i < 0x400000 ) { //placement_pointer + 0x1000) {
 		alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
 		i += 0x1000;
 	}
@@ -227,7 +229,6 @@ switch_page_directory(
 		page_directory_t * dir
 		) {
 	current_directory = dir;
-	//return;
 	__asm__ __volatile__ ("mov %0, %%cr3":: "r"(dir->physical_address));
 	uint32_t cr0;
 	__asm__ __volatile__ ("mov %%cr0, %0": "=r"(cr0));

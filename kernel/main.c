@@ -113,6 +113,7 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 	heap_install();                         /* Kernel heap */
 	tasking_install();                      /* Multi-tasking */
 	enable_fpu();
+	syscalls_install();
 
 	/* Kernel Version */
 	settextcolor(12, 0);
@@ -150,7 +151,7 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 	 */
 	fork();
 
-	if (getpid() == 0) {
+	if (getpid() == 1) {
 		while (1) {
 			uint16_t hours, minutes, seconds;
 			get_time(&hours, &minutes, &seconds);
@@ -190,6 +191,17 @@ int main(struct multiboot *mboot_ptr, uint32_t mboot_mag, uintptr_t esp)
 		}
 	} else {
 		start_shell();
+		if (fork()) {
+			enter_user_mode();
+			while(1) {
+				syscall_print("Herp");
+			};
+		} else {
+			enter_user_mode();
+			while(1) {
+				syscall_print("Derp");
+			};
+		}
 	}
 
 	return 0;
