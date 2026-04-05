@@ -64,6 +64,8 @@ int main(int argc, char ** argv) {
 			header->e_ident[2] != ELFMAG2 ||
 			header->e_ident[3] != ELFMAG3) {
 		printf("Header magic is wrong!\n");
+		printf("Are you sure this is a 32-bit ELF binary or object file?\n");
+		return 1;
 	}
 
 	/* Let's print out some of the header information, shall we? */
@@ -178,7 +180,7 @@ int main(int argc, char ** argv) {
 			printf("It should be loaded at 0x%x.\n", shdr->sh_addr);
 		}
 	}
-    
+
 	return 0;
 }
 
