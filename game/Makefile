@@ -10,4 +10,3 @@ all: ../initrd/bin/game ../initrd/bin/julia
 
 ../initrd/bin/julia: julia.c
 	${CC} ${CFLAGS} -o $@ $<
- 

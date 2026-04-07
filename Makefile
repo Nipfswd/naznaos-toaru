@@ -26,14 +26,17 @@ DD = dd conv=notrunc
 all: .passed system bootdisk.img docs utils
 system: naznaos-initrd naznaos-kernel
 
-install: naznaos-initrd naznaos-kernel
+install: system
 	@${ECHO} -n "\033[34m   --   Installing to /boot...\033[0m"
 	@cp naznaos-kernel /boot/naznaos-kernel
 	@cp naznaos-initrd /boot/naznaos-initrd
 	@${ECHO} "\r\033[34;1m   --   Kernel and ramdisk installed.\033[0m"
 
-run: naznaos-kernel naznaos-initrd
+run: system
 	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -append vid=qemu -serial stdio -vga std
+
+kvm: system
+	${EMU} -kernel naznaos-kernel -initrd naznaos-initrd -append vid=qemu -serial stdio -vga std -enable-kvm
 
 utils: ${UTILITIES}
 
