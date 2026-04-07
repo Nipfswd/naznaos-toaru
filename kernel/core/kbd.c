@@ -9,6 +9,8 @@
 
 #include <system.h>
 
+keyboard_buffer_t keyboard_direct_handler = 0;
+
 /* A bit-map to store the keyboard states */
 struct keyboard_states {
 	uint32_t shift : 1;
