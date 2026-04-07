@@ -177,6 +177,17 @@ ansi_put(
 							} else if (arg == 5) {
 								/* BLINK: I have no idea how I'm going to make this work! */
 								state.flags |= ANSI_BLINK;
+								if (i == 0) { break; }
+								if (i < argc) {
+									if (atoi(argv[i-1]) == 48) {
+										/* Background to i+1 */
+										state.bg = atoi(argv[i+1]);
+									} else if (atoi(argv[i-1]) == 38) {
+										/* Foreground to i+1 */
+										state.fg = atoi(argv[i+1]);
+									}
+									++i;
+								}
 							} else if (arg == 4) {
 								/* UNDERLINE */
 								state.flags |= ANSI_UNDERLINE;
@@ -254,7 +265,7 @@ ansi_put(
 						break;
 				}
 				/* Set the states */
-				if (state.flags & ANSI_BOLD) {
+				if (state.flags & ANSI_BOLD && state.fg < 9) {
 					bochs_set_colors(state.fg % 8 + 8, state.bg);
 				} else {
 					bochs_set_colors(state.fg, state.bg);
