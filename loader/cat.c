@@ -1,5 +1,11 @@
 #include <syscall.h>
 
+void *memset(void *p, int v, unsigned long n) {
+    unsigned char *c = p;
+    while (n--) *c++ = (unsigned char)v;
+    return p;
+}
+
 int main(int argc, char ** argv) {
 	if (argc < 2) {
 		syscall_print("Expected a filename.\n");
