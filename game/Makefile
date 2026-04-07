@@ -1,5 +1,5 @@
 CC = i686-pc-nazna-gcc
-CFLAGS = -march=core2 -std=c99 -O0 -I/afs/acm.uiuc.edu/user/lange7/nazna-toolchain/local/i686-pc-nazna/include/freetype2
+CFLAGS = -march=core2 -std=c99 -O3 -I/afs/acm.uiuc.edu/user/lange7/nazna-toolchain/local/i686-pc-nazna/include/freetype2
 
 .PHONY: all
 
