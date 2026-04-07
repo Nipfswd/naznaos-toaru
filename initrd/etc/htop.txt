@@ -36,4 +36,6 @@
 [55d 1111 [0;10;1m[30mroot     [39m[0;10m 20   0 [36m 124M  4[39m[0;10m072 [36m 2[39m[0;10m796 S  0.0  0.1  0:00.00 /usr/sbin/console-kit-daemon --no-daemon
 [56d 1112 [0;10;1m[30mroot     [39m[0;10m 20   0 [36m 124M  4[39m[0;10m072 [36m 2[39m[0;10m796 S  0.0  0.1  0:00.00 /usr/sbin/console-kit-daemon --no-daemon
 [57d 1113 [0;10;1m[30mroot     [39m[0;10m 20   0 [36m 124M  4[39m[0;10m072 [36m 2[39m[0;10m796 S  0.0  0.1  0:00.00 /usr/sbin/console-kit-daemon --no-daemon
-[58dF1[30m[46mHelp  [39;49m[0;10mF2[30m[46mSetup [39;49m[0;10mF3[30m[46mSearch[39;49m[0;10mF4[30m[46mInvert[39;49m[0;10mF5[30m[46mTree  [39;49m[0;10mF6[30m[46mSortBy[39;49m[0;10mF7[30m[46mNice -[39;49m[0;10mF8[30m[46mNice +[39;49m[0;10mF9[30m[46mKill  [39;49m[0;10mF10[30m[46mQuit[K[r[39;49m[0;10m[?1000l[?25h[?0c[58;1H
+[58dF1[30m[46mHelp  [39;49m[0;10mF2[30m[46mSetup [39;49m[0;10mF3[30m[46mSearch[39;49m[0;10mF4[30m[46mInvert[39;49m[0;10mF5[30m[46mTree  [39;49m[0;10mF6[30m[46mSortBy[39;49m[0;10mF7[30m[46mNice -[39;49m[0;10mF8[30m[46mNice +[39;49m[0;10mF9[30m[46mKill  [39;49m[0;10mF10[30m[46mQuit[K
+[r[39;49m[0;10m[?1000l[?25h[?0c[59;1H
+- fin -
